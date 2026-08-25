@@ -7,7 +7,7 @@ import httpx
 
 
 BACKEND_URL = os.getenv("BACKEND_API_URL", "http://127.0.0.1:8000").rstrip("/")
-REQUEST_TIMEOUT = 70.0
+REQUEST_TIMEOUT = float(os.getenv("REQUEST_TIMEOUT_SECONDS", "60"))
 
 
 class BackendAPIError(Exception):
@@ -24,9 +24,18 @@ def _check(response: httpx.Response) -> httpx.Response:
     return response
 
 
-def request(method: str, path: str, json: dict[str, Any] | None = None) -> Any:
+def request(
+    method: str,
+    path: str,
+    json: dict[str, Any] | None = None,
+    params: dict[str, Any] | None = None,
+    headers: dict[str, str] | None = None,
+) -> Any:
     try:
-        response = _check(httpx.request(method, f"{BACKEND_URL}{path}", json=json, timeout=REQUEST_TIMEOUT))
+        response = _check(httpx.request(
+            method, f"{BACKEND_URL}{path}", json=json, params=params, headers=headers,
+            timeout=REQUEST_TIMEOUT,
+        ))
         return response.json()
     except httpx.TimeoutException as error:
         raise BackendAPIError("백엔드 응답 시간이 초과되었습니다.") from error
@@ -39,8 +48,12 @@ def request(method: str, path: str, json: dict[str, Any] | None = None) -> Any:
 def upload(path: str, files: dict[str, Any], data: dict[str, Any]) -> Any:
     try:
         return _check(httpx.post(f"{BACKEND_URL}{path}", files=files, data=data, timeout=REQUEST_TIMEOUT)).json()
+    except httpx.TimeoutException as error:
+        raise BackendAPIError("파일 업로드 응답 시간이 초과되었습니다.") from error
     except httpx.RequestError as error:
-        raise BackendAPIError("이미지 업로드 중 Backend에 연결할 수 없습니다.") from error
+        raise BackendAPIError("파일 업로드 중 Backend에 연결할 수 없습니다.") from error
+    except ValueError as error:
+        raise BackendAPIError("파일 업로드 응답이 올바른 JSON이 아닙니다.") from error
 
 
 def request_bytes(path: str, json: dict[str, Any]) -> bytes:

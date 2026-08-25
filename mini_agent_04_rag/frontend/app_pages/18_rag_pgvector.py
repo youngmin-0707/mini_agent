@@ -4,8 +4,8 @@ from clients.agent_client import get_rag_status, index_rag_documents
 from core.api_client import BackendAPIError
 
 
-st.title("5️⃣ Ollama + pgvector")
-st.caption("같은 RAG 흐름에서 검색 구현만 실제 Embedding과 Vector DB로 교체합니다.")
+st.title("5️⃣ Ollama + pgvector + Redis")
+st.caption("pgvector는 영구 의미 검색을, Redis는 TTL 답변 Cache를 담당합니다.")
 
 st.code(
     "docker compose up -d\n"
@@ -28,4 +28,4 @@ if st.button("교육용 문서 색인", type="primary"):
     except BackendAPIError as error:
         st.error(str(error))
 
-st.info("색인이 끝나면 '문서 검색' 또는 '근거 기반 답변' 메뉴에서 pgvector를 선택하세요.")
+st.info("색인이 끝나면 pgvector 검색을 실행하고 같은 질문을 두 번 보내 Redis MISS→HIT를 비교하세요.")

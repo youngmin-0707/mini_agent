@@ -26,12 +26,21 @@ tool_schema = st.Page("app_pages/14_tool_schema.py", title="Tool Schema")
 tool_validation = st.Page("app_pages/15_tool_validation.py", title="Tool 입력 검증")
 tool_errors = st.Page("app_pages/16_tool_errors.py", title="Tool 오류 처리")
 rag_limit = st.Page("app_pages/19_rag_limit.py", title="검색 결과 제한")
+rag_ingestion = st.Page("app_pages/20_rag_ingestion.py", title="텍스트·PDF 색인")
+rag_advanced = st.Page("app_pages/21_rag_advanced_search.py", title="Metadata·Hybrid 검색")
+rag_agent = st.Page("app_pages/22_rag_agent.py", title="RAG Agent Tool")
+rag_labs_01_02 = st.Page("app_pages/23_rag_labs_01_02.py", title="RAG Labs 01~02")
+rag_labs_03_05 = st.Page("app_pages/24_rag_labs_03_05.py", title="RAG Labs 03~05")
+rag_labs_06_07 = st.Page("app_pages/25_rag_labs_06_07.py", title="RAG Labs 06~07")
 
 pages = [
     home, concept, travel, environment, llm, providers, prompt, validation,
     structured, image_analysis, tts, tool_schema, tool_select, tool_validation,
     tool_run, tool_errors, tool_loop, rag_concept, rag_chunks, rag_search,
-    rag_limit, rag_answer, rag_pgvector,
+    rag_limit, rag_answer, rag_pgvector, rag_ingestion, rag_advanced, rag_agent,
+    rag_labs_01_02,
+    rag_labs_03_05,
+    rag_labs_06_07,
 ]
 navigation = st.navigation(pages, position="hidden")
 
@@ -72,6 +81,12 @@ with st.sidebar:
         st.page_link(rag_limit, label="4-4. 검색 결과 제한")
         st.page_link(rag_answer, label="4-5. 근거 기반 답변")
         st.page_link(rag_pgvector, label="4-6. pgvector 실습")
+        st.page_link(rag_ingestion, label="4-7. 텍스트·PDF 색인")
+        st.page_link(rag_advanced, label="4-8. Metadata·Hybrid")
+        st.page_link(rag_agent, label="4-9. RAG Agent Tool")
+        st.page_link(rag_labs_01_02, label="4-10. Labs 01~02")
+        st.page_link(rag_labs_03_05, label="4-11. Labs 03~05")
+        st.page_link(rag_labs_06_07, label="4-12. Labs 06~07")
 
     st.divider()
     st.caption("실행 환경")

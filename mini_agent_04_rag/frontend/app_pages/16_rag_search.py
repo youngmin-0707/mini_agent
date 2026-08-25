@@ -17,11 +17,17 @@ questions = {
 question_type = st.selectbox("질문 유형", list(questions))
 query = questions[question_type]
 st.code(query, language="text")
-mode = st.radio("검색 방식", ["keyword", "pgvector"], horizontal=True)
+mode = st.radio("검색 방식", ["keyword", "pgvector", "hybrid"], horizontal=True)
 top_k = st.slider("top_k", 1, 5, 3)
 
-if mode == "pgvector":
+if mode == "keyword":
+    st.info("이 기초 Keyword 경로는 Docker 없이 실행하기 위해 메모리 교육 문서를 검색합니다.")
+else:
     st.warning("pgvector 검색 전에는 마지막 메뉴에서 문서 색인을 먼저 실행하세요.")
+    st.caption(
+        "pgvector와 Hybrid는 DB 색인 문서를 사용합니다. 동일 Corpus의 정량 비교는 "
+        "Labs 06 검색 품질 평가에서 진행합니다."
+    )
 
 if st.button("관련 문서 찾기", type="primary"):
     try:

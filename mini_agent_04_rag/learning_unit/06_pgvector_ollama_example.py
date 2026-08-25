@@ -2,7 +2,7 @@
 
 import os
 from pathlib import Path
-from uuid import uuid4
+from uuid import NAMESPACE_URL, uuid5
 
 import httpx
 import psycopg
@@ -46,14 +46,24 @@ def index_documents() -> None:
         cursor.execute("DELETE FROM documents WHERE collection_name = %s", (COLLECTION,))
         for index, (title, content, source) in enumerate(DOCUMENTS):
             vector = embed(content)
+            # 같은 문서를 다시 색인해도 중복되지 않는 결정적 ID를 사용합니다.
+            document_id = uuid5(NAMESPACE_URL, f"{COLLECTION}:{source}:{index}")
             cursor.execute(
                 """
                 INSERT INTO documents
                     (id, collection_name, title, content, source, chunk_index,
                      embedding_provider, embedding_model, embedding_dimension, embedding, metadata)
                 VALUES (%s, %s, %s, %s, %s, %s, 'ollama', %s, %s, %s, %s)
+                ON CONFLICT (id) DO UPDATE SET
+                    title = EXCLUDED.title,
+                    content = EXCLUDED.content,
+                    embedding_model = EXCLUDED.embedding_model,
+                    embedding_dimension = EXCLUDED.embedding_dimension,
+                    embedding = EXCLUDED.embedding,
+                    metadata = EXCLUDED.metadata,
+                    created_at = NOW()
                 """,
-                (uuid4(), COLLECTION, title, content, source, index,
+                (document_id, COLLECTION, title, content, source, index,
                  OLLAMA_EMBEDDING_MODEL, len(vector), vector, Jsonb({"lesson": "04_rag"})),
             )
 

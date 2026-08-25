@@ -82,6 +82,10 @@ def get_rag_documents():
     return request("GET", "/api/rag/documents")
 
 
+def get_indexed_rag_source(source: str):
+    return request("GET", "/api/rag/indexed", params={"source": source})
+
+
 def preview_chunks(
     text: str,
     source: str,
@@ -97,17 +101,32 @@ def preview_chunks(
     return request("POST", "/api/rag/chunks", json=payload)
 
 
-def search_rag(query: str, mode: str, top_k: int):
-    payload = {"query": query, "mode": mode, "top_k": top_k}
+def search_rag(
+    query: str, mode: str, top_k: int,
+    score_threshold: float | None = None,
+    metadata_filter: dict[str, Any] | None = None,
+):
+    payload = {
+        "query": query, "mode": mode, "top_k": top_k,
+        "score_threshold": score_threshold,
+        "metadata_filter": metadata_filter or {},
+    }
     return request("POST", "/api/rag/search", json=payload)
 
 
-def answer_with_rag(query: str, mode: str, top_k: int, provider: str):
+def answer_with_rag(
+    query: str, mode: str, top_k: int, provider: str, use_cache: bool = True,
+    score_threshold: float | None = None,
+    metadata_filter: dict[str, Any] | None = None,
+):
     payload = {
         "query": query,
         "mode": mode,
         "top_k": top_k,
         "provider": provider,
+        "use_cache": use_cache,
+        "score_threshold": score_threshold,
+        "metadata_filter": metadata_filter or {},
     }
     return request("POST", "/api/rag/answer", json=payload)
 
@@ -122,6 +141,77 @@ def index_rag_documents(reset_collection: bool = True):
 
 def get_rag_status():
     return request("GET", "/api/rag/status")
+
+
+def index_rag_text(title: str, content: str, source: str, metadata: dict[str, Any]):
+    return request("POST", "/api/rag/texts", json={
+        "title": title, "content": content, "source": source,
+        "metadata": metadata, "replace_source": True,
+    })
+
+
+def index_rag_pdf(filename: str, content: bytes, title: str):
+    files = {"pdf": (filename, content, "application/pdf")}
+    return upload("/api/rag/pdf", files, {"title": title, "replace_source": "true"})
+
+
+def run_rag_agent(
+    query: str, provider: str, mode: str = "hybrid", top_k: int = 3,
+):
+    return request("POST", "/api/rag/agent", json={
+        "query": query, "provider": provider, "mode": mode, "top_k": top_k,
+    })
+
+
+def seed_rag_lab_products():
+    return request("POST", "/api/rag/labs/products/seed")
+
+
+def search_rag_lab_products(
+    query: str, category: str | None, max_price: int | None, top_k: int = 3,
+):
+    return request("POST", "/api/rag/labs/products/search", json={
+        "query": query, "category": category, "max_price": max_price, "top_k": top_k,
+    })
+
+
+def seed_rag_lab_policies():
+    return request("POST", "/api/rag/labs/policies/seed")
+
+
+def search_rag_lab_policies(query: str, role: str, top_k: int = 3):
+    return request(
+        "POST", "/api/rag/labs/policies/search",
+        json={"query": query, "top_k": top_k},
+        headers={"X-Demo-Role": role},
+    )
+
+
+def seed_rag_evaluation_documents():
+    return request("POST", "/api/rag/labs/evaluation/seed")
+
+
+def run_rag_retrieval_evaluation(top_k: int = 3):
+    return request("POST", "/api/rag/labs/evaluation/run", json={"top_k": top_k})
+
+
+def seed_multi_tool_rag_documents():
+    return request("POST", "/api/rag/labs/multi-agent/seed")
+
+
+def run_multi_tool_rag_agent(
+    session_id: str, message: str, provider: str = "mock",
+):
+    return request("POST", "/api/rag/labs/multi-agent/run", json={
+        "session_id": session_id, "message": message, "provider": provider,
+    })
+
+
+def reset_multi_tool_rag_agent(session_id: str):
+    return request(
+        "DELETE", "/api/rag/labs/multi-agent/state",
+        params={"session_id": session_id},
+    )
 
 
 def upload_image(filename: str, content: bytes, content_type: str, question: str):
