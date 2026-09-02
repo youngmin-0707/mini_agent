@@ -34,6 +34,11 @@
             "path": "mini_agent_04_rag (1)",
             "envManager": "ms-python.python:venv",
             "packageManager": "ms-python.python:pip"
+        },
+        {
+            "path": "mini_agent_05_memory",
+            "envManager": "ms-python.python:venv",
+            "packageManager": "ms-python.python:pip"
         }
     ]
 }
