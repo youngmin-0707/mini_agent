@@ -8,6 +8,8 @@ from app.routers.lab_router import lab_router
 
 
 
+
+
 TAGS_METADATA = [
     {
         "name": "01 · LLM 기초",
