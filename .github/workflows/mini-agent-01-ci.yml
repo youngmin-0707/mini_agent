@@ -103,7 +103,7 @@ jobs:
             cd ~/mini_agent_01_llm
             test -f .env
             docker compose --env-file .env -f deploy/compose.yml config --quiet
-            docker compose --env-file .env -f deploy/compose.yml up -d --build
-            curl --fail --retry 12 --retry-delay 5 --retry-connrefused http://127.0.0.1:8000/health
-            curl --fail --retry 12 --retry-delay 5 --retry-connrefused http://127.0.0.1:8501/_stcore/health
+            docker compose --env-file .env -f deploy/compose.yml up -d --build --wait --wait-timeout 180
+            curl --fail --retry 12 --retry-delay 5 --retry-all-errors http://127.0.0.1:8000/health
+            curl --fail --retry 12 --retry-delay 5 --retry-all-errors http://127.0.0.1:8501/_stcore/health
           '

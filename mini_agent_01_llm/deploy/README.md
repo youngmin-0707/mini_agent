@@ -11,7 +11,7 @@ docker compose --env-file .env -f deploy/compose.yml config --quiet
 ## 이미지 빌드와 실행
 
 ```powershell
-docker compose --env-file .env -f deploy/compose.yml up -d --build
+docker compose --env-file .env -f deploy/compose.yml up -d --build --wait --wait-timeout 180
 docker compose --env-file .env -f deploy/compose.yml ps
 ```
 
