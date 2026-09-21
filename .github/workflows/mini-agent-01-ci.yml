@@ -10,6 +10,12 @@ on:
       - "mini_agent_01_llm/**"
       - ".github/workflows/mini-agent-01-ci.yml"
   workflow_dispatch:
+    inputs:
+      deploy:
+        description: Deploy to the production EC2 after CI succeeds
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -27,10 +33,10 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
           cache: pip
@@ -58,8 +64,8 @@ jobs:
   deploy-ec2:
     # GitHub의 Repository variable을 true로 설정한 뒤 main에 Push할 때만 배포합니다.
     if: >-
-      github.event_name == 'push' &&
-      github.ref == 'refs/heads/main' &&
+      ((github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && inputs.deploy)) &&
       vars.ENABLE_EC2_DEPLOY == 'true'
     needs: test-and-build
     runs-on: ubuntu-latest
@@ -67,7 +73,7 @@ jobs:
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Configure verified SSH identity
         env:
