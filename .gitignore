@@ -5,3 +5,4 @@ __pycache__/
 .pytest_cache/
 *.py[cod]
 .streamlit/secrets.toml
+mini_agent_01_llm/docs/
