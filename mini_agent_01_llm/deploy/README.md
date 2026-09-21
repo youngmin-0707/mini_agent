@@ -47,5 +47,5 @@ AWS_SSH_PRIVATE_KEY
 AWS_SSH_KNOWN_HOSTS
 ```
 
-Repository variable `ENABLE_EC2_DEPLOY`를 `true`로 설정하면 `main` Push의 CI가 성공한 뒤
-EC2 배포가 실행됩니다. 이 값을 설정하기 전에는 CI만 실행되고 EC2 배포는 건너뜁니다.
+`main` Push의 CI가 성공하면 EC2 배포가 자동 실행됩니다. Actions 화면에서 수동으로 실행할
+때는 `deploy=true`를 선택해야 EC2 배포까지 진행됩니다.

@@ -62,11 +62,10 @@ jobs:
         run: docker compose -f deploy/compose.yml build
 
   deploy-ec2:
-    # GitHub의 Repository variable을 true로 설정한 뒤 main에 Push할 때만 배포합니다.
+    # main Push 또는 수동 실행에서 deploy=true를 선택했을 때 배포합니다.
     if: >-
       ((github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'workflow_dispatch' && inputs.deploy)) &&
-      vars.ENABLE_EC2_DEPLOY == 'true'
+      (github.event_name == 'workflow_dispatch' && inputs.deploy))
     needs: test-and-build
     runs-on: ubuntu-latest
     environment: production
