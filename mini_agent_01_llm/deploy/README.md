@@ -38,7 +38,7 @@ EC2에는 Docker와 Docker Compose가 설치되어 있어야 하며 다음 파�
 ~/mini_agent_01_llm/.env
 ```
 
-GitHub 저장소의 `production` Environment에 다음 Secret을 등록합니다.
+GitHub 저장소의 `wk01` Environment에 다음 Secret을 등록합니다.
 
 ```text
 AWS_HOST

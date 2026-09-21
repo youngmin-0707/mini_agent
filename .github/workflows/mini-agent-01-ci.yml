@@ -68,7 +68,7 @@ jobs:
       (github.event_name == 'workflow_dispatch' && inputs.deploy))
     needs: test-and-build
     runs-on: ubuntu-latest
-    environment: production
+    environment: wk01
 
     steps:
       - name: Checkout source
